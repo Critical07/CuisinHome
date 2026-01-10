@@ -1,15 +1,18 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   body {
-    @apply font-sans antialiased bg-wellness-beige text-wellness-onyx;
-    margin: 0;
-    padding: 0;
-    overflow-x: hidden;
+    @apply font-sans antialiased bg-wellness-beige text-wellness-onyx overflow-x-hidden;
+    -webkit-tap-highlight-color: transparent;
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
   }
-  
+
   .dark body {
     @apply bg-black text-zinc-100;
   }
@@ -18,52 +21,48 @@
 @layer components {
   .title-display {
     font-family: 'Syne', sans-serif;
-    @apply font-extrabold uppercase;
+    @apply font-extrabold uppercase leading-[1.1] tracking-tight;
   }
-  
+
   .vibrant-card {
-    @apply bg-white rounded-[2.2rem] shadow-[0_10px_20px_rgba(0,0,0,0.04)];
+    @apply bg-white border border-black/5 shadow-[0_10px_30px_rgba(0,0,0,0.04)] rounded-[2.2rem] transition-all duration-500;
   }
-  
+
   .dark .vibrant-card {
-    @apply bg-zinc-900 border border-white/[0.04] shadow-none;
+    @apply bg-zinc-900 border-white/5 shadow-none;
   }
-  
+
   .membership-card {
     background: linear-gradient(145deg, #1a1a1a 0%, #000000 100%);
-    @apply rounded-[2rem] border border-white/[0.08];
+    @apply rounded-[2rem] border border-white/10 relative overflow-hidden shadow-2xl;
   }
-  
+
   .glass-nav {
-    @apply backdrop-blur-[40px] bg-white/75;
+    @apply backdrop-blur-[40px] bg-white/75 border border-black/5;
   }
-  
+
   .dark .glass-nav {
-    @apply bg-black/75;
+    @apply bg-black/75 border-white/5;
   }
-  
-  .title-luxury {
-    font-family: 'Syne', sans-serif;
-    @apply font-extrabold tracking-tighter;
-  }
-  
-  .glow-subtle-gold {
-    box-shadow: 0 0 20px rgba(197, 163, 88, 0.3);
-  }
-  
-  .floating {
-    animation: floating 3s ease-in-out infinite;
-  }
+}
+
+.shimmer {
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.03), transparent);
+  background-size: 200% 100%;
+  animation: shimmer 4s infinite linear;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.floating {
+  animation: floating 3s ease-in-out infinite;
 }
 
 @keyframes floating {
   0% { transform: translateY(0px); }
   50% { transform: translateY(-10px); }
   100% { transform: translateY(0px); }
-}
-
-#root {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
 }
