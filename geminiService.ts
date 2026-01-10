@@ -1,16 +1,9 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { Recipe, Ingredient, MealType, PrepTimePreference } from "./types";
 
-/**
- * Initialisation sécurisée du client Gemini.
- * process.env.API_KEY est injecté automatiquement par l'environnement de build/déploiement.
- */
 const getAI = () => {
-  const apiKey = typeof process !== 'undefined' && process.env ? process.env.API_KEY : undefined;
-  if (!apiKey) {
-    console.warn("API_KEY manquante dans l'environnement. Les fonctionnalités IA seront limitées.");
-  }
-  return new GoogleGenAI({ apiKey: apiKey || "" });
+  // Always use a direct access to process.env.API_KEY without fallback.
+  return new GoogleGenAI({ apiKey: process.env.API_KEY });
 };
 
 const NUTRITION_SYSTEM_INSTRUCTION = `Tu es un expert nutritionniste et chef cuisinier de renommée mondiale. 
@@ -27,16 +20,15 @@ export async function analyzeFoodImage(base64Image: string): Promise<{
   fats: number;
 }> {
   const ai = getAI();
+  // Always pass contents as an object with parts for multimodal inputs as per guidelines.
   const response = await ai.models.generateContent({
     model: 'gemini-3-flash-preview',
-    contents: [
-      {
-        parts: [
-          { inlineData: { mimeType: 'image/jpeg', data: base64Image } },
-          { text: "Identifie ce plat et ses macros (kcal, glucides, protéines, lipides)." }
-        ]
-      }
-    ],
+    contents: {
+      parts: [
+        { inlineData: { mimeType: 'image/jpeg', data: base64Image } },
+        { text: "Identifie ce plat et ses macros (kcal, glucides, protéines, lipides)." }
+      ]
+    },
     config: {
       systemInstruction: NUTRITION_SYSTEM_INSTRUCTION,
       responseMimeType: "application/json",
@@ -54,9 +46,7 @@ export async function analyzeFoodImage(base64Image: string): Promise<{
     }
   });
 
-  const text = response.text;
-  if (!text) throw new Error("Réponse vide de l'IA");
-  return JSON.parse(text);
+  return JSON.parse(response.text || "{}");
 }
 
 export async function generateRecipe(
@@ -69,9 +59,10 @@ export async function generateRecipe(
   const pantryList = pantry.map(i => i.name).join(", ");
   const prompt = `Génère une recette de ${mealType} (${timePref}). Ingrédients disponibles : ${pantryList}. Objectif : ${goal}.`;
 
+  // Use string directly for text-only contents.
   const response = await ai.models.generateContent({
     model: 'gemini-3-flash-preview',
-    contents: [{ parts: [{ text: prompt }] }],
+    contents: prompt,
     config: {
       systemInstruction: NUTRITION_SYSTEM_INSTRUCTION,
       responseMimeType: "application/json",
@@ -103,9 +94,7 @@ export async function generateRecipe(
     }
   });
 
-  const text = response.text;
-  if (!text) throw new Error("Réponse vide de l'IA");
-  const recipe = JSON.parse(text);
+  const recipe = JSON.parse(response.text || "{}");
   recipe.imageUrl = `https://picsum.photos/seed/${encodeURIComponent(recipe.title)}/600/400`;
   return recipe;
 }
@@ -114,9 +103,10 @@ export async function importRecipeFromTikTokUrl(url: string): Promise<Recipe> {
   const ai = getAI();
   const prompt = `Analyse et importe la recette de cette vidéo TikTok : ${url}`;
 
+  // Use string directly for text-only contents.
   const response = await ai.models.generateContent({
     model: 'gemini-3-pro-preview',
-    contents: [{ parts: [{ text: prompt }] }],
+    contents: prompt,
     config: {
       systemInstruction: NUTRITION_SYSTEM_INSTRUCTION,
       tools: [{ googleSearch: {} }],
@@ -144,9 +134,7 @@ export async function importRecipeFromTikTokUrl(url: string): Promise<Recipe> {
     }
   });
 
-  const text = response.text;
-  if (!text) throw new Error("Réponse vide de l'IA");
-  const recipe = JSON.parse(text);
+  const recipe = JSON.parse(response.text || "{}");
   recipe.imageUrl = `https://picsum.photos/seed/${encodeURIComponent(recipe.title)}/600/400`;
   return recipe;
 }

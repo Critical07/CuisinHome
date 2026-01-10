@@ -6,79 +6,73 @@
   :root {
     --primary: #C5A358;
     --beige: #FAF9F6;
+    --onyx: #121212;
   }
 
-  html, body {
-    height: 100%;
-    margin: 0;
-    padding: 0;
-    -webkit-text-size-adjust: 100%;
-    -webkit-font-smoothing: antialiased;
-    overscroll-behavior-y: none;
+  html {
+    -webkit-tap-highlight-color: transparent;
+    scroll-behavior: smooth;
   }
 
   body {
-    @apply font-sans antialiased bg-wellness-beige text-wellness-onyx overflow-x-hidden;
-    /* Correction pour la barre d'adresse mobile */
+    @apply font-sans antialiased text-[#121212] bg-[#FAF9F6];
     min-height: 100vh;
-    min-height: 100dvh;
+    min-height: -webkit-fill-available;
+    /* Gestion des encoches iPhone */
     padding-top: env(safe-area-inset-top);
     padding-bottom: env(safe-area-inset-bottom);
     padding-left: env(safe-area-inset-left);
     padding-right: env(safe-area-inset-right);
-    /* Évite la sélection de texte sur les éléments d'interface */
-    -webkit-user-select: none;
-    user-select: none;
-  }
-
-  .dark body {
-    @apply bg-black text-zinc-100;
-  }
-
-  /* Autorise la sélection pour les inputs et instructions */
-  input, textarea, p, span {
-    -webkit-user-select: text;
-    user-select: text;
+    overflow-x: hidden;
   }
 }
 
 @layer components {
-  .title-display {
-    font-family: 'Syne', sans-serif;
-    @apply font-extrabold uppercase leading-[1.1] tracking-tight;
-  }
-
   .vibrant-card {
-    @apply bg-white border border-black/5 shadow-[0_10px_30px_rgba(0,0,0,0.04)] rounded-[2.2rem] transition-all duration-500;
+    @apply bg-white border border-black/[0.03] shadow-[0_8px_30px_rgba(0,0,0,0.02)] rounded-[2.5rem] transition-all duration-500 ease-out;
   }
 
   .dark .vibrant-card {
-    @apply bg-zinc-900 border-white/5 shadow-none;
-  }
-
-  .membership-card {
-    background: linear-gradient(145deg, #1a1a1a 0%, #000000 100%);
-    @apply rounded-[2rem] border border-white/10 relative overflow-hidden shadow-2xl;
+    @apply bg-[#0A0A0A] border-white/5 shadow-none;
   }
 
   .glass-nav {
-    @apply backdrop-blur-[40px] bg-white/75 border border-black/5;
+    @apply backdrop-blur-[40px] bg-white/80 border border-black/5;
   }
 
   .dark .glass-nav {
-    @apply bg-black/75 border-white/5;
+    @apply bg-black/80 border-white/5;
   }
 
   .title-luxury {
     font-family: 'Syne', sans-serif;
     @apply font-extrabold tracking-tight;
   }
+  
+  .safe-bottom {
+    padding-bottom: calc(2rem + env(safe-area-inset-bottom));
+  }
 }
 
-.shimmer {
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.03), transparent);
+/* Animations DTCA */
+@keyframes fadeInSlideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-dtc {
+  animation: fadeInSlideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.shimmer-gold {
+  background: linear-gradient(
+    90deg,
+    rgba(197, 163, 88, 0) 0%,
+    rgba(197, 163, 88, 0.1) 50%,
+    rgba(197, 163, 88, 0) 100%
+  );
   background-size: 200% 100%;
-  animation: shimmer 4s infinite linear;
+  animation: shimmer 3s infinite linear;
 }
 
 @keyframes shimmer {
@@ -86,25 +80,9 @@
   100% { background-position: 200% 0; }
 }
 
-.floating {
-  animation: floating 3s ease-in-out infinite;
-}
-
-@keyframes floating {
-  0% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
-  100% { transform: translateY(0px); }
-}
-
+/* Fix pour Safari Mobile height 100% */
 #root {
   min-height: 100vh;
-  min-height: 100dvh;
   display: flex;
   flex-direction: column;
-}
-
-/* Fix pour les clics rapides sur iPhone */
-button, [role="button"] {
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
 }
