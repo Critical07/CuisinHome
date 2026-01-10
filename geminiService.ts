@@ -1,9 +1,14 @@
-
 import { GoogleGenAI, Type } from "@google/genai";
 import { Recipe, Ingredient, MealType, PrepTimePreference } from "./types";
 
-// L'initialisation se fait à l'intérieur des fonctions ou via une instance paresseuse
-const getAI = () => new GoogleGenAI({ apiKey: process.env.API_KEY || "" });
+// Initialisation sécurisée
+const getAI = () => {
+  const apiKey = process.env.API_KEY;
+  if (!apiKey) {
+    console.warn("Gemini API Key is missing");
+  }
+  return new GoogleGenAI({ apiKey: apiKey || "" });
+};
 
 const NUTRITION_SYSTEM_INSTRUCTION = `Tu es un expert nutritionniste et chef cuisinier de renommée mondiale. 
 Règles strictes de création culinaire :
