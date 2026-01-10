@@ -1,0 +1,40 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+    font-family: 'Inter', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    background-color: #FAF9F6;
+    color: #121212;
+    margin: 0;
+    padding: 0;
+}
+
+.dark body { background-color: #000000; color: #F2F2F7; }
+
+#root { min-height: 100vh; }
+
+.title-display { font-family: 'Syne', sans-serif; font-weight: 800; text-transform: uppercase; }
+.vibrant-card { background: #FFFFFF; border-radius: 2.2rem; box-shadow: 0 10px 20px rgba(0,0,0,0.04); }
+.dark .vibrant-card { background: #0A0A0A; border: 1px solid rgba(255, 255, 255, 0.04); }
+.membership-card { background: linear-gradient(145deg, #1a1a1a 0%, #000000 100%); border-radius: 2rem; border: 1px solid rgba(255, 255, 255, 0.08); }
+.glass-nav { backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px); background: rgba(255, 255, 255, 0.75); }
+
+#debug-error {
+    display: none;
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    right: 20px;
+    background: #fee2e2;
+    border: 2px solid #ef4444;
+    color: #991b1b;
+    padding: 20px;
+    border-radius: 12px;
+    z-index: 9999;
+    font-family: monospace;
+    font-size: 12px;
+    white-space: pre-wrap;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
