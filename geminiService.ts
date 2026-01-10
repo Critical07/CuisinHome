@@ -1,13 +1,15 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { Recipe, Ingredient, MealType, PrepTimePreference } from "./types";
 
-// Initialisation sécurisée
+// Lazy initialization for extra safety
+let aiInstance: GoogleGenAI | null = null;
+
 const getAI = () => {
-  const apiKey = process.env.API_KEY;
-  if (!apiKey) {
-    console.warn("Gemini API Key is missing");
+  if (!aiInstance) {
+    const apiKey = process.env.API_KEY || "";
+    aiInstance = new GoogleGenAI({ apiKey });
   }
-  return new GoogleGenAI({ apiKey: apiKey || "" });
+  return aiInstance;
 };
 
 const NUTRITION_SYSTEM_INSTRUCTION = `Tu es un expert nutritionniste et chef cuisinier de renommée mondiale. 
