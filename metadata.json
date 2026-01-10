@@ -1,0 +1,7 @@
+{
+  "name": "Cuisin'Home AI",
+  "description": "L'application qui répond à la question 'Qu'est-ce qu'on mange ce soir ?' en s'adaptant à votre frigo et vos objectifs nutritionnels.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
