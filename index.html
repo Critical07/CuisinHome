@@ -3,11 +3,11 @@
 <html lang="fr" class="light">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Cuisin'Home AI • Elite Nutrition</title>
     
     <!-- PWA & iOS specific tags -->
-    <link rel="manifest" href="manifest.json">
+    <link rel="manifest" href="/manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Cuisin'Home">
@@ -48,10 +48,10 @@
             background-color: #FAF9F6;
             color: #121212;
             overflow-x: hidden;
-            /* Prevent bouncing on iOS */
             position: fixed;
             width: 100%;
             height: 100%;
+            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
         }
         
         .dark body { background-color: #000000; color: #F2F2F7; }
@@ -150,5 +150,7 @@
 </head>
 <body>
     <div id="root"></div>
+    <!-- CRITICAL: Explicity entry point for Vercel/Standard Browsers -->
+    <script type="module" src="index.tsx"></script>
 </body>
 </html>
