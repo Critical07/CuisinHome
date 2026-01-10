@@ -1,9 +1,17 @@
-
 import { GoogleGenAI, Type } from "@google/genai";
 import { Recipe, Ingredient, MealType, PrepTimePreference } from "./types";
 
-// Initialisation sécurisée
-const getAI = () => new GoogleGenAI({ apiKey: process.env.API_KEY || "" });
+/**
+ * Initialisation sécurisée du client Gemini.
+ * process.env.API_KEY est injecté automatiquement par l'environnement de build/déploiement.
+ */
+const getAI = () => {
+  const apiKey = typeof process !== 'undefined' && process.env ? process.env.API_KEY : undefined;
+  if (!apiKey) {
+    console.warn("API_KEY manquante dans l'environnement. Les fonctionnalités IA seront limitées.");
+  }
+  return new GoogleGenAI({ apiKey: apiKey || "" });
+};
 
 const NUTRITION_SYSTEM_INSTRUCTION = `Tu es un expert nutritionniste et chef cuisinier de renommée mondiale. 
 Règles strictes de création culinaire :
@@ -46,7 +54,9 @@ export async function analyzeFoodImage(base64Image: string): Promise<{
     }
   });
 
-  return JSON.parse(response.text);
+  const text = response.text;
+  if (!text) throw new Error("Réponse vide de l'IA");
+  return JSON.parse(text);
 }
 
 export async function generateRecipe(
@@ -93,7 +103,9 @@ export async function generateRecipe(
     }
   });
 
-  const recipe = JSON.parse(response.text);
+  const text = response.text;
+  if (!text) throw new Error("Réponse vide de l'IA");
+  const recipe = JSON.parse(text);
   recipe.imageUrl = `https://picsum.photos/seed/${encodeURIComponent(recipe.title)}/600/400`;
   return recipe;
 }
@@ -132,7 +144,9 @@ export async function importRecipeFromTikTokUrl(url: string): Promise<Recipe> {
     }
   });
 
-  const recipe = JSON.parse(response.text);
+  const text = response.text;
+  if (!text) throw new Error("Réponse vide de l'IA");
+  const recipe = JSON.parse(text);
   recipe.imageUrl = `https://picsum.photos/seed/${encodeURIComponent(recipe.title)}/600/400`;
   return recipe;
 }

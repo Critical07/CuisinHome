@@ -1,20 +1,44 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
+  :root {
+    --primary: #C5A358;
+    --beige: #FAF9F6;
+  }
+
+  html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    -webkit-text-size-adjust: 100%;
+    -webkit-font-smoothing: antialiased;
+    overscroll-behavior-y: none;
+  }
+
   body {
     @apply font-sans antialiased bg-wellness-beige text-wellness-onyx overflow-x-hidden;
-    -webkit-tap-highlight-color: transparent;
+    /* Correction pour la barre d'adresse mobile */
+    min-height: 100vh;
+    min-height: 100dvh;
     padding-top: env(safe-area-inset-top);
     padding-bottom: env(safe-area-inset-bottom);
     padding-left: env(safe-area-inset-left);
     padding-right: env(safe-area-inset-right);
+    /* Évite la sélection de texte sur les éléments d'interface */
+    -webkit-user-select: none;
+    user-select: none;
   }
 
   .dark body {
     @apply bg-black text-zinc-100;
+  }
+
+  /* Autorise la sélection pour les inputs et instructions */
+  input, textarea, p, span {
+    -webkit-user-select: text;
+    user-select: text;
   }
 }
 
@@ -44,6 +68,11 @@
   .dark .glass-nav {
     @apply bg-black/75 border-white/5;
   }
+
+  .title-luxury {
+    font-family: 'Syne', sans-serif;
+    @apply font-extrabold tracking-tight;
+  }
 }
 
 .shimmer {
@@ -65,4 +94,17 @@
   0% { transform: translateY(0px); }
   50% { transform: translateY(-10px); }
   100% { transform: translateY(0px); }
+}
+
+#root {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Fix pour les clics rapides sur iPhone */
+button, [role="button"] {
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
 }
