@@ -2,17 +2,18 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { Recipe, Ingredient, MealType, PrepTimePreference } from "./types";
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+// L'initialisation se fait à l'intérieur des fonctions ou via une instance paresseuse
+const getAI = () => new GoogleGenAI({ apiKey: process.env.API_KEY || "" });
 
 const NUTRITION_SYSTEM_INSTRUCTION = `Tu es un expert nutritionniste et chef cuisinier de renommée mondiale. 
 Règles strictes de création culinaire :
-1. COHÉRENCE DES SAVEURS : Un "Dessert" ou "Goûter" DOIT être sucré ou fruité. N'utilise JAMAIS de légumes salés (potiron, oignon, avocat, etc.) pour des desserts sauf si c'est une pâtisserie reconnue (ex: carrot cake).
-2. ANALYSE DU FRIGO : Si les ingrédients du frigo ne permettent pas de faire un plat COHÉRENT pour la catégorie demandée, mets "isPossible: false" et explique pourquoi dans "missingTypeExplanation".
-3. DIVERSITÉ : Ne propose JAMAIS deux fois la même base.
-4. TIMING : Respecte scrupuleusement le temps demandé (Express = <15min, Gourmet = 30-45min).
-5. FORMAT : Réponds uniquement en JSON sans texte autour.`;
+1. COHÉRENCE DES SAVEURS : Un "Dessert" ou "Goûter" DOIT être sucré ou fruité.
+2. ANALYSE DU FRIGO : Si les ingrédients ne permettent pas de faire un plat COHÉRENT, explique pourquoi.
+3. TIMING : Respecte scrupuleusement le temps demandé (Express <15min).
+4. FORMAT : Réponds uniquement en JSON.`;
 
 export async function importRecipeFromTikTokUrl(url: string): Promise<Recipe & { error?: string }> {
+  const ai = getAI();
   const prompt = `ANALYSE TIKTOK NUTRITIONNELLE. URL : ${url}`;
 
   const response = await ai.models.generateContent({
@@ -61,6 +62,7 @@ export async function analyzeFoodImage(base64Image: string): Promise<{
   protein: number;
   fats: number;
 }> {
+  const ai = getAI();
   const response = await ai.models.generateContent({
     model: 'gemini-3-flash-preview',
     contents: [
@@ -102,16 +104,13 @@ export async function generateRecipe(
   mealType: MealType,
   timePref: PrepTimePreference = 'express'
 ): Promise<Recipe> {
+  const ai = getAI();
   const pantryList = pantry.map(i => i.name).join(", ");
   const goalFR = goal === 'lose' ? 'perdre du poids' : goal === 'gain' ? 'prendre de la masse' : 'maintenir ma forme';
-  const timeLabel = timePref === 'express' ? "EXPRESS (max 15 minutes, préparation rapide)" : "GOURMET (30 à 45 minutes, plus élaboré)";
+  const timeLabel = timePref === 'express' ? "EXPRESS (max 15 minutes)" : "GOURMET (30 à 45 minutes)";
   
   const salt = Math.random().toString(36).substring(7);
-  const prompt = `Génère une recette de ${mealType}. 
-  CONTRAINTE TEMPS : ${timeLabel}.
-  FRIGO : ${pantryList}. 
-  OBJECTIF : ${goalFR}.
-  IMPORTANT : Pour un Dessert/Goûter, si tu n'as pas de fruits ou base sucrée, dis que c'est impossible. Ne mélange pas légumes salés et sucre. Seed: ${salt}.`;
+  const prompt = `Génère une recette de ${mealType}. CONTRAINTE TEMPS : ${timeLabel}. FRIGO : ${pantryList}. OBJECTIF : ${goalFR}. Seed: ${salt}.`;
 
   const response = await ai.models.generateContent({
     model: 'gemini-3-flash-preview',
