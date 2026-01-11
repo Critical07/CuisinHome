@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="fr" class="light">
 <head>
@@ -5,72 +6,151 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Cuisin'Home AI • Elite Nutrition</title>
     
+    <!-- PWA & iOS specific tags -->
     <link rel="manifest" href="/manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Cuisin'Home">
     <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3655/3655435.png">
     
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              primary: { DEFAULT: '#C5A358', dark: '#A68A46' },
+              wellness: {
+                beige: '#FAF9F6',
+                linen: '#FFFFFF',
+                sage: '#4A5D4E',
+                blush: '#E29595',
+                gold: '#D4AF37',
+                onyx: '#121212'
+              }
+            },
+            fontFamily: {
+              sans: ['Inter', 'system-ui', 'sans-serif'],
+              display: ['Syne', 'sans-serif'],
+            }
+          }
+        }
+      }
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
-    
     <style>
-      #app-loader {
-        position: fixed;
-        inset: 0;
-        background: #FAF9F6;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        z-index: 9999;
-        font-family: 'Inter', sans-serif;
-      }
-      .spinner {
-        width: 40px;
-        height: 40px;
-        border: 3px solid rgba(197, 163, 88, 0.1);
-        border-top-color: #C5A358;
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
-      }
-      @keyframes spin { to { transform: rotate(360deg); } }
-      #error-display {
-        display: none;
-        padding: 20px;
-        color: #ef4444;
-        text-align: center;
-        font-size: 14px;
-      }
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            background-color: #FAF9F6;
+            color: #121212;
+            overflow-x: hidden;
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+        }
+        
+        .dark body { background-color: #000000; color: #F2F2F7; }
+
+        #root {
+            height: 100%;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .title-display {
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            letter-spacing: -0.01em;
+            line-height: 1.1;
+            text-transform: uppercase;
+        }
+
+        .vibrant-card {
+            background: #FFFFFF;
+            border: 1px solid rgba(0, 0, 0, 0.04);
+            box-shadow: 
+                0 2px 4px rgba(0,0,0,0.02),
+                0 10px 20px rgba(0,0,0,0.04),
+                0 20px 40px -10px rgba(0,0,0,0.05);
+            border-radius: 2.2rem;
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .dark .vibrant-card {
+            background: #0A0A0A;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            box-shadow: 
+                0 10px 30px -10px rgba(0,0,0,0.8),
+                inset 0 1px 1px rgba(255,255,255,0.02);
+        }
+
+        .membership-card {
+            background: linear-gradient(145deg, #1a1a1a 0%, #000000 100%);
+            width: 100%;
+            border-radius: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 40px 80px -20px rgba(0, 0, 0, 0.6);
+        }
+
+        .card-chip {
+            width: 44px;
+            height: 32px;
+            background: linear-gradient(135deg, #d4af37 0%, #c5a358 100%);
+            border-radius: 6px;
+            position: relative;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
+        }
+
+        .shimmer {
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.03), transparent);
+            background-size: 200% 100%;
+            animation: shimmer 4s infinite linear;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        .glass-nav {
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            background: rgba(255, 255, 255, 0.75);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .dark .glass-nav {
+            background: rgba(10, 10, 10, 0.75);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .glow-neon-gold { box-shadow: 0 0 20px rgba(197, 163, 88, 0.3); }
+
+        ::-webkit-scrollbar { width: 0px; }
     </style>
 <script type="importmap">
 {
   "imports": {
-    "react": "https://esm.sh/react@^19.2.3",
+    "recharts": "https://esm.sh/recharts@^3.6.0",
     "react/": "https://esm.sh/react@^19.2.3/",
+    "react": "https://esm.sh/react@^19.2.3",
     "@google/genai": "https://esm.sh/@google/genai@^1.35.0",
-    "lucide-react": "https://esm.sh/lucide-react@^0.562.0",
-    "react-dom/": "https://esm.sh/react-dom@^19.2.3/"
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "lucide-react": "https://esm.sh/lucide-react@^0.562.0"
   }
 }
 </script>
 </head>
-<body class="bg-[#FAF9F6] text-[#121212] antialiased">
-    <div id="app-loader">
-        <div class="spinner"></div>
-        <div id="error-display">Désolé, une erreur est survenue au chargement.</div>
-    </div>
-    
+<body>
     <div id="root"></div>
-
-    <script>
-      window.onerror = function(msg, url, line) {
-        document.getElementById('error-display').style.display = 'block';
-        document.getElementById('error-display').innerText = 'Erreur: ' + msg + ' (L' + line + ')';
-      };
-      // Masquer le loader une fois que React a pris le relais (géré dans App.tsx ou index.tsx)
-    </script>
-    <script type="module" src="/index.tsx"></script>
+    <!-- CRITICAL: Explicity entry point for Vercel/Standard Browsers -->
+    <script type="module" src="index.tsx"></script>
 </body>
 </html>
